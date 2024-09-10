@@ -1,8 +1,11 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
+  const env = import.meta.env.VITE_APP_VARIABLE;
+
+  console.log(import.meta);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -10,6 +13,7 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <p>The env is {env}</p>
         <a
           className="App-link"
           href="https://reactjs.org"
