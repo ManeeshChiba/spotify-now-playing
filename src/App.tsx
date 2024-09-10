@@ -1,27 +1,29 @@
 import logo from "./logo.svg";
 import "./App.css";
+import { useSpotifyPlaying } from "./hooks";
+import { useAuthContext } from "./AuthProvider";
+import { useMemo } from "react";
 
 function App() {
-  const env = import.meta.env.VITE_APP_VARIABLE;
+  const { access_token } = useAuthContext();
+  const nowPlaying = useSpotifyPlaying();
 
-  console.log(import.meta);
+  const handleNowPlayingFetch = () => {
+    nowPlaying.refetch();
+  };
+
+  const imageSrc = useMemo(() => {
+    return nowPlaying?.data?.item?.album?.images?.[0]?.url;
+  }, [nowPlaying.data]);
+
+  console.log(nowPlaying.data);
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <p>The env is {env}</p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <img src={imageSrc ?? logo} className="App-logo" alt="logo" />
+        <p>Access token {access_token}</p>
+        <button onClick={() => handleNowPlayingFetch()}>Get Now Playing</button>
       </header>
     </div>
   );
