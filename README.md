@@ -1,6 +1,8 @@
 # 10ft Display for Spotify Now Playing
-
 Designed to run on your local network and keep active on a spare monitor. Display your currently playing songs as album art.
+
+<img width="832" alt="Screenshot 2024-09-14 at 7 24 11 PM" src="https://github.com/user-attachments/assets/766f3f9d-c73f-45f0-8d67-b75a8b50136f">
+
 
 ## To Run
 
