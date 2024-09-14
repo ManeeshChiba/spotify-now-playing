@@ -7,13 +7,14 @@ import {
 } from "react";
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-// const params = new URLSearchParams(window.location.search);
 
 interface AuthContextValues {
+  getToken: () => void;
   access_token?: string | null;
 }
 
 const authContextValues: AuthContextValues = {
+  getToken: () => null,
   access_token: null,
 };
 
@@ -24,6 +25,14 @@ export interface AuthContextProviderProps {
   children: ReactNode;
 }
 
+interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token: string;
+  scope: string;
+}
+
 export const useAuthContext = () => {
   return useContext(AuthContext);
 };
@@ -31,9 +40,9 @@ export const useAuthContext = () => {
 export function AuthContextProvider(props: AuthContextProviderProps) {
   const params = new URLSearchParams(props.location.search);
   const [code, setCode] = useState(params.get("code"));
-  const [tokenResponse, setTokenResponse] = useState<string | null>(null);
-
-  console.log(tokenResponse);
+  const [tokenResponse, setTokenResponse] = useState<TokenResponse | null>(
+    null
+  );
 
   const redirectToAuthCodeFlow = async (clientId: string) => {
     const verifier = generateCodeVerifier(128);
@@ -89,29 +98,33 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
     });
 
     const isGood = result.status >= 200 && result.status < 300;
+
     const response = await result.json();
     if (isGood) {
       setTokenResponse(response);
     }
   };
 
-  const setOrGetCode = async () => {
+  const authenticate = () => {
     if (!code) {
       console.log("There is no code, redirecting");
       redirectToAuthCodeFlow(CLIENT_ID);
-    } else if (!tokenResponse) {
-      console.log("There is a code, but no access token");
-      getAccessToken(CLIENT_ID, code);
+    } else {
+      console.log("There is a code, no need to redirect");
     }
   };
 
   useEffect(() => {
-    setOrGetCode();
+    if (code && !tokenResponse) {
+      console.log("There is a code, but no access token");
+      getAccessToken(CLIENT_ID, code);
+    }
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
+        getToken: () => authenticate(),
         access_token: tokenResponse?.access_token,
       }}
     >

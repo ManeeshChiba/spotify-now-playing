@@ -22,7 +22,8 @@ export function useSpotifyPlaying() {
       return response;
     },
     queryKey: ["player"],
-    retry: false,
-    enabled: false,
+    enabled: !!access_token,
+    keepPreviousData: true,
+    refetchInterval: 3 * 1000,
   });
 }

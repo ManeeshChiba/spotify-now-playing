@@ -1,31 +1,30 @@
-import logo from "./logo.svg";
-import "./App.css";
-import { useSpotifyPlaying } from "./hooks";
-import { useAuthContext } from "./AuthProvider";
 import { useMemo } from "react";
+import { useAuthContext } from "./AuthProvider";
+import { useSpotifyPlaying } from "./hooks";
+import "./App.css";
 import cdcase from "/case.png";
-import album from "/album.jpg";
 
 export function App() {
-  // const { access_token } = useAuthContext();
-  // const nowPlaying = useSpotifyPlaying();
+  const { access_token, getToken } = useAuthContext();
 
-  // const handleNowPlayingFetch = () => {
-  //   nowPlaying.refetch();
-  // };
+  const nowPlaying = useSpotifyPlaying();
 
-  // const imageSrc = useMemo(() => {
-  //   return nowPlaying?.data?.item?.album?.images?.[0]?.url;
-  // }, [nowPlaying.data]);
-
-  // console.log(nowPlaying.data);
+  const imageSrc = useMemo(() => {
+    return nowPlaying?.data?.item?.album?.images?.[0]?.url;
+  }, [nowPlaying.data]);
 
   return (
     <main className="app">
-      <div className="album-art">
-        <img className="case" src={cdcase} />
-        <img src={album} alt="{REPLACE_ME}" />
-      </div>
+      {!!access_token ? (
+        <div className="album-art">
+          <img className="case" src={cdcase} />
+          <img src={imageSrc} alt="{REPLACE_ME}" />
+        </div>
+      ) : (
+        <button className="login-button" onClick={() => getToken()}>
+          Sign In to Spotify
+        </button>
+      )}
     </main>
   );
 }
